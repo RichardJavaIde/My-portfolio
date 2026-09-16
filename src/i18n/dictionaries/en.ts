@@ -10,7 +10,7 @@ import type { Dictionary } from "./es";
 
 export const en: Dictionary = {
   meta: {
-    title: "Richard — Web Developer",
+    title: "Richard Duran — Web Developer",
     description:
       "Richard's portfolio: a full-stack web developer focused on Next.js, React and TypeScript.",
   },
@@ -25,7 +25,7 @@ export const en: Dictionary = {
 
   hero: {
     greeting: "Hi, I'm",
-    name: "Richard",
+    name: "Richard Duran",
     role: "Full-stack developer with Next.js",
     summary:
       "I build modern, complete web applications with Next.js, React, TypeScript and the serverless ecosystem.",

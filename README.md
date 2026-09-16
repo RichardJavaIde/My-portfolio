@@ -163,6 +163,7 @@ El deploy recomendado es **Vercel** (gratis para proyectos personales y nativo p
 
 - ✅ Página completa con las 5 secciones, bilingüe ES/EN.
 - ✅ Dark mode manual con persistencia.
-- ⏳ Pendiente: email real en `src/data/profile.ts` (hoy es placeholder), publicar el deploy.
+- ✅ Email real en `src/data/profile.ts` (botón "Escríbeme" → mailto).
+- ⏳ Pendiente: publicar el deploy.
 
 Hecho con Next.js, React y Tailwind CSS · Aprendizaje por fases con proyectos reales.

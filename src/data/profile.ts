@@ -6,10 +6,9 @@
  */
 
 export const profile = {
-  name: "Richard",
+  name: "Richard Duran",
   githubUser: "RichardJavaIde",
   github: "https://github.com/RichardJavaIde",
   mainRepoUrl: "https://github.com/RichardJavaIde/SistemaArquileres",
-  // TODO: reemplaza por tu correo real.
-  email: "tu-correo@ejemplo.com",
+  email: "Duran41001@gmail.com",
 };

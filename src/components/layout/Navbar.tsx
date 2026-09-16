@@ -19,7 +19,7 @@ export function Navbar() {
           href="#inicio"
           className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100"
         >
-          Richard
+          Richard Duran
           <span className="text-cyan-600 dark:text-cyan-400">.</span>
         </a>
 

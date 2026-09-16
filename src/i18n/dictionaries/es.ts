@@ -10,7 +10,7 @@
 
 export const es = {
   meta: {
-    title: "Richard — Desarrollador Web",
+    title: "Richard Duran — Desarrollador Web",
     description:
       "Portafolio de Richard, desarrollador web full-stack con Next.js, React y TypeScript.",
   },
@@ -25,7 +25,7 @@ export const es = {
 
   hero: {
     greeting: "Hola, soy",
-    name: "Richard",
+    name: "Richard Duran",
     role: "Desarrollador full-stack con Next.js",
     summary:
       "Construyo aplicaciones web modernas y completas con Next.js, React, TypeScript y el ecosistema serverless.",
