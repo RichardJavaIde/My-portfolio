@@ -74,8 +74,9 @@ src/
 │  └─ globals.css         @import "tailwindcss" + @custom-variant dark + color-scheme
 ├─ components/
 │  ├─ layout/             Navbar, Footer, LangToggle, ThemeToggle  (Client)
-│  ├─ sections/           Hero, About, Skills, Projects, Contact  (Client)
-│  └─ ui/                 primitivas puras: Container, Section, SectionHeading, Button, Card, Tag
+│  ├─ sections/           Hero, About, Skills, Projects, Contact, Marquee  (solo el Marquee es Server)
+│  └─ ui/                 primitivas: Container, Section, SectionHeading, Button, Card, Tag
+│                          + Reveal y ScrollProgress  (Client, con hooks)
 ├─ context/
 │  └─ lang-context.tsx    (Client) LangProvider + useLang() / useDictionary()
 ├─ i18n/dictionaries/
@@ -130,6 +131,21 @@ Los componentes **no tienen texto hardcodeado**:  ✓ datos guardan *estructura*
 
 **Regla de oro para agregar un proyecto:** 2 líneas en `src/data/projects.ts` + 3 en el diccionario de cada idioma (`es.ts` y `en.ts`). El compilador te obliga a las dos lenguas.
 
+### 🎬 Efectos y animaciones (toque pro, sin librerías)
+
+| Efecto | Dónde | Tecnología |
+|---|---|---|
+| **Reveal + stagger** | Encabezados de sección y tarjetas de About / Skills / Projects / Contact | `IntersectionObserver` (API nativa) + clases `.reveal` / `.is-visible`. Cada tarjeta aparece con un retardo escalonado (80ms skills, 100ms projects) → efecto "cascada" |
+| **Barra de progreso** | Fija arriba, bajo el navbar | Listener `scroll` pasivo + `width` calculado (`scrollY / (scrollHeight − innerHeight)`). Con gradiente cyan |
+| **Marquee** | Cinta infinita de tecnologías bajo el Hero | Solo CSS: `@keyframes` que mueve la pista a `translateX(-50%)` (el ancho de una copia duplicada) → loop sin cortes. Se pausa con `:hover` |
+| **Hero fade-in** | Al cargar la página | `@keyframes heroFadeUp` con `animation-delay` escalonado en texto y avatar |
+
+**Detalles pro:**
+- **`prefers-reduced-motion`** → si el sistema pide menos movimiento, se cancela todo el animation y el contenido queda visible.
+- El `IntersectionObserver` hace `unobserve()` tras activarse → cada reveal corre **una sola vez** (no se re-esconde al subir/bajar).
+- Componentes **Client** con hooks (Reveal, ScrollProgress); el Marquee es **Server** (puro CSS) → cero JavaScript para la cinta.
+- Demo previa en `demos/lab-animaciones.html` (la usamos para elegir los efectos antes de implementarlos).
+
 ---
 
 ## 🧭 Las 5 secciones
@@ -166,6 +182,7 @@ El deploy recomendado es **Vercel** (gratis para proyectos personales y nativo p
 - ✅ Página completa con las 5 secciones, bilingüe ES/EN.
 - ✅ Dark mode manual con persistencia.
 - ✅ Email real en `src/data/profile.ts` (botón "Escríbeme" → mailto).
+- ✅ Efectos: reveal + stagger, barra de progreso y marquee (con `prefers-reduced-motion`).
 - ⏳ Pendiente: publicar el deploy.
 
 Hecho con Next.js, React y Tailwind CSS · Aprendizaje por fases con proyectos reales.

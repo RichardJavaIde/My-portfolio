@@ -19,7 +19,7 @@ export function Hero() {
     <section id="inicio" className="scroll-mt-20">
       <Container className="grid items-center gap-10 py-16 sm:py-24 md:grid-cols-[1fr_auto]">
         {/* Columna de texto */}
-        <div>
+        <div className="hero-fade" style={{ animationDelay: "0ms" }}>
           <p className="text-sm font-semibold uppercase tracking-widest text-cyan-600 dark:text-cyan-400">
             {hero.greeting}
           </p>
@@ -47,7 +47,8 @@ export function Hero() {
           alt={`Foto de ${hero.name}`}
           width={192}
           height={192}
-          className="hidden size-48 rounded-full border-4 border-cyan-600/20 object-cover dark:border-cyan-400/20 md:block"
+          className="hero-fade hidden size-48 rounded-full border-4 border-cyan-600/20 object-cover dark:border-cyan-400/20 md:block"
+          style={{ animationDelay: "150ms" }}
         />
       </Container>
     </section>

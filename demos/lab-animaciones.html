@@ -1,0 +1,571 @@
+<title>Lab de animaciones</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" />
+<style>
+  :root {
+    --ground: #f6f8fc;
+    --surface: #ffffff;
+    --surface-2: #eef2f7;
+    --text: #0f172a;
+    --muted: #55657d;
+    --hair: #e2e8f0;
+    --accent: #0891b2;
+    --accent-bright: #06b6d4;
+    --chip: #e0f2fe;
+    --chip-text: #0e7490;
+    --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 30px -18px rgba(15, 23, 42, 0.25);
+    --radius: 16px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0b1220;
+      --surface: #121b2e;
+      --surface-2: #17233a;
+      --text: #f1f5f9;
+      --muted: #9fb0c8;
+      --hair: #26344d;
+      --accent: #22d3ee;
+      --accent-bright: #67e8f9;
+      --chip: #0e2c3f;
+      --chip-text: #67e8f9;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0b1220;
+    --surface: #121b2e;
+    --surface-2: #17233a;
+    --text: #f1f5f9;
+    --muted: #9fb0c8;
+    --hair: #26344d;
+    --accent: #22d3ee;
+    --accent-bright: #67e8f9;
+    --chip: #0e2c3f;
+    --chip-text: #67e8f9;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+    padding-block: 40px 64px;
+  }
+
+  /* Barra de progreso real, fija arriba (efecto #5 en vivo) */
+  .progress-rail {
+    position: fixed;
+    top: env(safe-area-inset-top, 0px);
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 50;
+  }
+  .progress-rail span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; }
+
+  header.hero { margin-bottom: 34px; }
+  .eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-family: "Syne", system-ui, sans-serif;
+    font-size: clamp(34px, 6vw, 58px);
+    line-height: 1.02;
+    margin: 0 0 14px;
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+  .lede {
+    max-width: 640px;
+    color: var(--muted);
+    margin: 0;
+    font-size: 16px;
+  }
+  .lede strong { color: var(--text); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--hair);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .card h2 {
+    font-family: "Syne", system-ui, sans-serif;
+    font-size: 19px;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .trigger {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--chip);
+    color: var(--chip-text);
+    white-space: nowrap;
+  }
+  .desc { color: var(--muted); font-size: 13.5px; margin: 0; }
+
+  /* ---- Cajas demo ---- */
+  .stage {
+    height: 210px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    border: 1px dashed transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Demo 1 y 2: mini-sección con bloques */
+  .mini-section { padding: 14px; display: flex; flex-direction: column; gap: 8px; width: 100%; }
+  .mini-bar { height: 10px; border-radius: 999px; background: var(--hair); }
+  .mini-bar.thin { width: 55%; }
+  .mini-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mini-chip {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--hair);
+    color: var(--muted);
+  }
+  .mini-chip.on { border-color: var(--accent); color: var(--accent); background: var(--chip); }
+
+  /* reveal (demo 1): un bloque que sube y aparece */
+  .reveal-target {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  .reveal-target.in { opacity: 1; transform: none; }
+
+  /* stagger (demo 2): chips que se encienden en cascada */
+  .stagger-target { opacity: 0; transform: translateY(14px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .stagger-target.in { opacity: 1; transform: none; }
+
+  /* tilt (demo 3): card 3D */
+  .tilt-box {
+    width: 150px;
+    height: 190px;
+    background: linear-gradient(150deg, var(--surface), var(--surface-2));
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Syne", system-ui, sans-serif;
+    font-size: 44px;
+    font-weight: 800;
+    color: var(--text);
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.18s ease-out;
+    box-shadow: var(--shadow);
+    will-change: transform;
+  }
+  .tilt-box b {
+    font-weight: 400;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 22px;
+    color: var(--accent);
+    transform: translateZ(26px);
+    display: inline-block;
+    margin-left: 2px;
+  }
+  .tilt-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: radial-gradient(220px 220px at var(--mx, 50%) var(--my, 50%), var(--accent-bright), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .tilt-box:hover::after { opacity: 0.22; }
+  .tilt-box p {
+    position: absolute;
+    bottom: 10px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin: 0;
+    transform: translateZ(20px);
+  }
+
+  /* gradient (demo 4): texto con gradiente fluyendo */
+  .grad-text {
+    font-family: "Syne", system-ui, sans-serif;
+    font-size: clamp(30px, 6vw, 46px);
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-bright), #2563eb, var(--accent));
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientFlow 6s linear infinite;
+    letter-spacing: -0.02em;
+  }
+  @keyframes gradientFlow { to { background-position: 300% 0; } }
+
+  /* marquee (demo 6): cinta infinita */
+  .marquee {
+    width: 100%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 14px;
+    width: max-content;
+    animation: marquee 18s linear infinite;
+    padding-left: 14px;
+  }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  .marquee-item {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--hair);
+    background: var(--surface);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .marquee-item.dot { color: var(--accent); border-color: transparent; background: transparent; padding: 8px 0; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* progress simulado (demo 5 panel) */
+  .prog-demo { width: 220px; display: flex; flex-direction: column; gap: 10px; }
+  .prog-track { height: 10px; border-radius: 999px; background: var(--hair); overflow: hidden; }
+  .prog-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    transition: width 0.1s linear;
+  }
+  .prog-labels {
+    display: flex; justify-content: space-between;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px; color: var(--muted);
+  }
+  #progValue { font-variant-numeric: tabular-nums; color: var(--accent); }
+
+  .foot-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--hair);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.18s, color 0.18s, background 0.18s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .how {
+    display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11.5px; color: var(--muted);
+  }
+  .how code {
+    background: var(--surface-2);
+    border: 1px solid var(--hair);
+    padding: 3px 7px;
+    border-radius: 6px;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  footer.fine {
+    margin-top: 30px;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grad-text, .marquee-track { animation: none; }
+    .reveal-target, .stagger-target { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+
+<div class="progress-rail" id="progressBar"><span></span></div>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Portafolio de Richard · demo</p>
+    <h1>Lab de&nbsp;animaciones</h1>
+    <p class="lede">
+      Seis efectos que los portfolios <strong>"pro"</strong> usan, probados con <strong>tus colores</strong>
+      (slate + cyan, la "R" de Richard). Pasa el mouse o pulsa <strong>Reproducir</strong> en cada tarjeta.
+      La <strong>barra de progreso</strong> ya está activa arriba: haz scroll.
+    </p>
+  </header>
+
+  <div class="grid">
+
+    <!-- 1. Reveal -->
+    <section class="card">
+      <div class="card-top"><h2>Reveal al hacer scroll</h2><span class="trigger">trigger: scroll</span></div>
+      <p class="desc">Cada bloque aparece y sube suavemente cuando entra a la vista. Es el más usado: da aire, no distrae.</p>
+      <div class="stage" id="stageReveal">
+        <div class="mini-section">
+          <div id="revealBlock" class="reveal-target in"><div class="mini-bar"></div></div>
+          <div class="reveal-target in" style="transition-delay:.08s"><div class="mini-bar thin"></div></div>
+        </div>
+      </div>
+      <div class="foot-row">
+        <button class="btn" data-replay="reveal">▶ Reproducir</button>
+        <span class="how">cómo: <code>IntersectionObserver</code> + <code>transition</code></span>
+      </div>
+    </section>
+
+    <!-- 2. Stagger -->
+    <section class="card">
+      <div class="card-top"><h2>Stagger en cascada</h2><span class="trigger">trigger: scroll</span></div>
+      <p class="desc">Los mismos chips de tus habilidades entran uno tras otro con un pequeño retardo: el ojo sigue el orden.</p>
+      <div class="stage" id="stageStagger">
+        <div class="mini-row" id="staggerRow">
+          <span class="mini-chip stagger-target">Next.js</span>
+          <span class="mini-chip stagger-target">React</span>
+          <span class="mini-chip stagger-target">TS</span>
+          <span class="mini-chip stagger-target">Tailwind</span>
+          <span class="mini-chip stagger-target">Drizzle</span>
+          <span class="mini-chip stagger-target">Neon</span>
+        </div>
+      </div>
+      <div class="foot-row">
+        <button class="btn" data-replay="stagger">▶ Reproducir</button>
+        <span class="how">cómo: <code>IntersectionObserver</code> + <code>delay</code> por ítem</span>
+      </div>
+    </section>
+
+    <!-- 3. Tilt 3D -->
+    <section class="card">
+      <div class="card-top"><h2>Card 3D (tilt)</h2><span class="trigger">trigger: mouse</span></div>
+      <p class="desc">La tarjeta se inclina siguiendo el cursor y un brillo la acompaña. Ideal para las cards de proyectos.</p>
+      <div class="stage" id="stageTilt">
+        <div class="tilt-box" id="tiltBox">R<b>.</b><p>Richard</p></div>
+      </div>
+      <div class="foot-row">
+        <button class="btn" data-replay="tilt">▶ Auto-demo</button>
+        <span class="how">cómo: <code>mousemove</code> → <code>rotateX/Y</code></span>
+      </div>
+    </section>
+
+    <!-- 4. Gradiente -->
+    <section class="card">
+      <div class="card-top"><h2>Texto con gradiente</h2><span class="trigger">trigger: continuo</span></div>
+      <p class="desc">Tu nombre con un gradiente cyan→azul que fluye despacio. Efecto de "marca viva" en el hero.</p>
+      <div class="stage"><span class="grad-text">Richard</span></div>
+      <div class="foot-row">
+        <span class="how" style="padding-left:2px">cómo: <code>background-clip: text</code> + <code>keyframes</code> (solo CSS)</span>
+      </div>
+    </section>
+
+    <!-- 5. Progress -->
+    <section class="card">
+      <div class="card-top"><h2>Barra de progreso</h2><span class="trigger">trigger: scroll</span></div>
+      <p class="desc">El avance de lectura en una barrita cyan arriba. La real ya está arriba de todo; aquí su simulación.</p>
+      <div class="stage">
+        <div class="prog-demo">
+          <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+          <div class="prog-labels"><span>inicio</span><span id="progValue">0%</span></div>
+        </div>
+      </div>
+      <div class="foot-row">
+        <button class="btn" data-replay="progress">▶ Recorrido</button>
+        <span class="how">cómo: listener de <code>scroll</code> → <code>width %</code> (nativo)</span>
+      </div>
+    </section>
+
+    <!-- 6. Marquee -->
+    <section class="card">
+      <div class="card-top"><h2>Marquee infinito</h2><span class="trigger">trigger: continuo</span></div>
+      <p class="desc">Tus tecnologías en una cinta que nunca se detiene. Se pausa al pasar el mouse. Muy de "developer fresh".</p>
+      <div class="stage" style="flex-direction:column; gap:0">
+        <div class="marquee">
+          <div class="marquee-track">
+            <span class="marquee-item dot">●</span><span class="marquee-item">Next.js</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">React</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">TypeScript</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">Tailwind</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">PostgreSQL</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">Drizzle</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">pnpm</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">Git</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">Next.js</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">React</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">TypeScript</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">Tailwind</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">PostgreSQL</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">Drizzle</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">pnpm</span>
+            <span class="marquee-item dot">●</span><span class="marquee-item">Git</span>
+          </div>
+        </div>
+      </div>
+      <div class="foot-row">
+        <span class="how" style="padding-left:2px">cómo: <code>@keyframes marquee</code> + duplicar lista (solo CSS)</span>
+      </div>
+    </section>
+  </div>
+
+  <footer class="fine">Todo cabe en tu stack actual: la mitad es solo CSS, el resto usa IntersectionObserver nativo. Ninguna librería obligatoria.</footer>
+</div>
+
+<script>
+  // ——— Barra de progreso real ———
+  const rail = document.getElementById('progressBar');
+  function moveProgress() {
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - doc.clientHeight;
+    const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+    rail.firstElementChild.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', moveProgress, { passive: true });
+  window.addEventListener('resize', moveProgress);
+  moveProgress();
+
+  // ——— Simulación de progreso (panel 5) ———
+  const progFill = document.getElementById('progFill');
+  const progValue = document.getElementById('progValue');
+  let progTimer = null;
+  function resetProg() { progFill.style.width = '0%'; progValue.textContent = '0%'; }
+
+  // ——— Helpers de animación de panel ———
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function playReveal() {
+    const els = document.querySelectorAll('#stageReveal .reveal-target');
+    els.forEach(el => { el.classList.remove('in'); });
+    requestAnimationFrame(() => setTimeout(() => els.forEach(el => el.classList.add('in')), 30));
+  }
+
+  function playStagger() {
+    const chips = document.querySelectorAll('#staggerRow .stagger-target');
+    chips.forEach((c, i) => { c.style.transitionDelay = '0ms'; c.classList.remove('in'); });
+    requestAnimationFrame(() => setTimeout(() => {
+      chips.forEach((c, i) => {
+        c.style.transitionDelay = (i * 70) + 'ms';
+        c.classList.add('in');
+      });
+    }, 40));
+  }
+
+  function playTilt() {
+    const box = document.getElementById('tiltBox');
+    const keyframes = [
+      { transform: 'perspective(600px) rotateX(6deg) rotateY(-10deg)' },
+      { transform: 'perspective(600px) rotateX(-4deg) rotateY(8deg)' },
+      { transform: 'perspective(600px) rotateX(0) rotateY(0)' },
+    ];
+    box.animate(keyframes, { duration: 1400, easing: 'ease-in-out', iterations: 1 });
+  }
+
+  function playProgress() {
+    if (progTimer) { clearInterval(progTimer); }
+    resetProg();
+    progFill.style.transition = 'width 1.6s cubic-bezier(.2,.7,.2,1)';
+    requestAnimationFrame(() => progFill.style.width = '100%');
+    let v = 0;
+    progTimer = setInterval(() => {
+      v = Math.min(100, v + 4);
+      progValue.textContent = v + '%';
+      if (v >= 100) clearInterval(progTimer);
+    }, 64);
+  }
+
+  document.querySelectorAll('[data-replay]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const which = btn.dataset.replay;
+      if (reduce) return;
+      if (which === 'reveal') playReveal();
+      else if (which === 'stagger') playStagger();
+      else if (which === 'tilt') playTilt();
+      else if (which === 'progress') playProgress();
+    });
+  });
+
+  // ——— Tilt 3D con el mouse (desktop) ———
+  const tiltBox = document.getElementById('tiltBox');
+  const tiltStage = document.getElementById('stageTilt');
+  if (matchMedia('(pointer: fine)').matches) {
+    tiltStage.addEventListener('mousemove', (e) => {
+      const r = tiltStage.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      tiltBox.style.transform =
+        `perspective(600px) rotateX(${(-y * 14).toFixed(1)}deg) rotateY(${(x * 14).toFixed(1)}deg)`;
+      tiltBox.style.setProperty('--mx', ((x + 0.5) * 100).toFixed(0) + '%');
+      tiltBox.style.setProperty('--my', ((y + 0.5) * 100).toFixed(0) + '%');
+    });
+    tiltStage.addEventListener('mouseleave', () => {
+      tiltBox.style.transform =
+        'perspective(600px) rotateX(0deg) rotateY(0deg)';
+    });
+  }
+
+  // ——— Reveal y Stagger por scroll (auto) ———
+  const observePane = (selector, fn) => {
+    const el = document.querySelector(selector);
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => { if (en.isIntersecting) fn(); });
+    }, { threshold: 0.4 });
+    io.observe(el);
+  };
+  observePane('#stageReveal', playReveal);
+  observePane('#stageStagger', playStagger);
+
+  // Reset del progress simulado si alguien vuelve a pasar
+  const progCard = document.getElementById('progFill').closest('.card');
+  if (progCard) {
+    new IntersectionObserver((es) => es.forEach(e => { if (!e.isIntersecting) resetProg(); }),
+      { threshold: 0 }).observe(progCard);
+  }
+</script>

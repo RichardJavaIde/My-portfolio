@@ -4,6 +4,7 @@ import { es } from "@/i18n/dictionaries/es";
 import { LangProvider } from "@/context/lang-context";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import "./globals.css";
 
 /**
@@ -39,6 +40,7 @@ export default function RootLayout({
           storageKey="portfolio-theme"
         >
           <LangProvider>
+            <ScrollProgress />
             <Navbar />
             {children}
             <Footer />
