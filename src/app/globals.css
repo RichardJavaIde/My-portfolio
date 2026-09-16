@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Habilita `dark:*` cuando <html> lleva la clase .dark.
+   next-themes la pone automáticamente (attribute="class").
+   El :where() tiene especificidad 0, así cualquier utilidad base del
+   mismo elemento que se combata, gana la variante dark. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Desplazamiento suave para las anclas del navbar (ej. #proyectos). */
+html {
+  scroll-behavior: smooth;
+}
+
+/* El tema ES manual (enableSystem={false}): forzamos color-scheme propio
+   para que scrollbars y controles nativos sigan el tema, no el del SO. */
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}

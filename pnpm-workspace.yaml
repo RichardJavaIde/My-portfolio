@@ -1,0 +1,5 @@
+# Ajustes de pnpm 11: autorizamos a unrs-resolver (dependencia de
+# eslint-config-next) a ejecutar su script de build. Sin esto, pnpm
+# considera el install como fallido y next build no puede verificar deps.
+allowBuilds:
+  unrs-resolver: true
