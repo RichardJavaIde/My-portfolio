@@ -69,6 +69,8 @@ src/
 ├─ app/
 │  ├─ layout.tsx          (Server) html lang + ThemeProvider + LangProvider + Navbar + Footer
 │  ├─ page.tsx            (Server) compone las 5 secciones
+│  ├─ icon.svg            favicon SVG: logo de la pestaña (R de Richard + punto cyan)
+│  ├─ favicon.ico         fallback clásico para navegadores/tabs antiguas
 │  └─ globals.css         @import "tailwindcss" + @custom-variant dark + color-scheme
 ├─ components/
 │  ├─ layout/             Navbar, Footer, LangToggle, ThemeToggle  (Client)
