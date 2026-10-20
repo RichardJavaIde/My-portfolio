@@ -19,11 +19,13 @@ export const es = {
     { label: "Inicio", href: "#inicio" },
     { label: "Sobre mí", href: "#sobre-mi" },
     { label: "Habilidades", href: "#habilidades" },
+    { label: "Trayectoria", href: "#trayectoria" },
     { label: "Proyectos", href: "#proyectos" },
     { label: "Contacto", href: "#contacto" },
   ],
 
   hero: {
+    badge: "Disponible para nuevas oportunidades",
     greeting: "Hola, soy",
     name: "Richard Duran",
     role: "Desarrollador full-stack con Next.js",
@@ -49,10 +51,46 @@ export const es = {
     ],
   },
 
+  stats: {
+    projects: "Proyectos",
+    technologies: "Tecnologías",
+    areas: "Áreas de especialidad",
+  },
+
   skills: {
     eyebrow: "Habilidades",
     title: "Mi ecosistema tecnológico",
     description: "Tecnologías que uso y practico día a día, ordenadas por área.",
+  },
+
+  journey: {
+    eyebrow: "Trayectoria",
+    title: "Cómo he ido creciendo",
+    description:
+      "Mi ruta de aprendizaje, fase por fase: de los fundamentos de React a un sistema full-stack completo.",
+    phaseLabel: "Fase",
+    items: {
+      basics: {
+        title: "Fundamentos de React",
+        description:
+          "Componentes, estado y renderizado: mis primeros pasos construyendo interfaces.",
+      },
+      tooling: {
+        title: "Frontend moderno",
+        description:
+          "React con Vite y Tailwind CSS, con enrutado y consumo de APIs.",
+      },
+      api: {
+        title: "Backend y APIs REST",
+        description:
+          "Express con TypeScript y Sequelize sobre PostgreSQL.",
+      },
+      fullstack: {
+        title: "Full-stack con Next.js",
+        description:
+          "Rentia: autenticación, base de datos en la nube, roles y validación tipada.",
+      },
+    },
   },
 
   projects: {

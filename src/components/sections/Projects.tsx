@@ -20,7 +20,7 @@ export function Projects() {
   const t = useDictionary();
 
   return (
-    <Section id="proyectos" className="bg-slate-50 dark:bg-slate-900/50">
+    <Section id="proyectos">
       <Reveal>
         <SectionHeading
           align="center"

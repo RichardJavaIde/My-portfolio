@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { cn } from "@/lib/cn";
+import { motion } from "motion/react";
 
 type RevealProps = {
   children: ReactNode;
@@ -14,46 +13,26 @@ type RevealProps = {
 /**
  * Envuelve contenido que "aparece" al entrar a la vista (fade + subida).
  *
- * ¿Cómo funciona? IntersectionObserver es una API NATIVA del navegador:
- * observa cuándo el elemento cruza el viewport y ejecuta una función.
- * - threshold 0.15 → se activa cuando el 15% del bloque es visible.
- * - Tras activarse, hacemos unobserve(): el efecto corre SOLO UNA VEZ
- *   (el contenido no se vuelve a esconder si el usuario sube y baja).
- *
- * El fade en sí es clases de CSS (`.reveal` / `.is-visible`), que viven
- * en globals.css. Este componente solo decide CUÁNDO añadir la clase.
+ * Ahora lo anima Motion (antes: IntersectionObserver + clases CSS).
+ * La API es idéntica, así que ninguna sección tuvo que cambiar.
+ * - `whileInView` → anima cuando el elemento entra al viewport.
+ * - `viewport.once` → corre UNA sola vez (no se re-esconde al subir/bajar).
+ * - `amount: 0.15` → se activa cuando el 15% del bloque es visible.
  */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisible(true);
-            observer.unobserve(el);
-          }
-        });
-      },
-      { threshold: 0.15 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div
-      ref={ref}
-      className={cn("reveal", visible && "is-visible", className)}
-      style={{ transitionDelay: `${delay}ms` }}
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{
+        duration: 0.6,
+        delay: delay / 1000,
+        ease: [0.22, 1, 0.36, 1],
+      }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }

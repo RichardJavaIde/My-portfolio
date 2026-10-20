@@ -5,6 +5,7 @@ import { LangProvider } from "@/context/lang-context";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
+import { MotionProvider } from "@/components/ui/MotionProvider";
 import "./globals.css";
 
 /**
@@ -14,6 +15,7 @@ import "./globals.css";
  * Idioma: <LangProvider> (adentro) permite useDictionary()/useLang() en
  * cualquier componente hijo. Son dos sistemas independientes: uno toca la
  * clase del <html>, el otro el atributo lang y su propio localStorage.
+ * Animaciones: <MotionProvider> (Motion) respeta prefers-reduced-motion en todo el sitio.
  * metadata exportada = los <title> y <meta description> del SEO.
  * ! suppressHydrationWarning: el script anti-flash de next-themes aplica la
  * clase .dark ANTES de que React hidrate, así que el <html> del cliente
@@ -40,10 +42,12 @@ export default function RootLayout({
           storageKey="portfolio-theme"
         >
           <LangProvider>
-            <ScrollProgress />
-            <Navbar />
-            {children}
-            <Footer />
+            <MotionProvider>
+              <ScrollProgress />
+              <Navbar />
+              {children}
+              <Footer />
+            </MotionProvider>
           </LangProvider>
         </ThemeProvider>
       </body>

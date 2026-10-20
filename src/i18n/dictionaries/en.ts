@@ -19,11 +19,13 @@ export const en: Dictionary = {
     { label: "Home", href: "#inicio" },
     { label: "About", href: "#sobre-mi" },
     { label: "Skills", href: "#habilidades" },
+    { label: "Journey", href: "#trayectoria" },
     { label: "Projects", href: "#proyectos" },
     { label: "Contact", href: "#contacto" },
   ],
 
   hero: {
+    badge: "Open to new opportunities",
     greeting: "Hi, I'm",
     name: "Richard Duran",
     role: "Full-stack developer with Next.js",
@@ -49,10 +51,46 @@ export const en: Dictionary = {
     ],
   },
 
+  stats: {
+    projects: "Projects",
+    technologies: "Technologies",
+    areas: "Focus areas",
+  },
+
   skills: {
     eyebrow: "Skills",
     title: "My technology ecosystem",
     description: "Technologies I use and practice every day, grouped by area.",
+  },
+
+  journey: {
+    eyebrow: "Journey",
+    title: "How I've been growing",
+    description:
+      "My learning path, phase by phase: from React fundamentals to a complete full-stack system.",
+    phaseLabel: "Phase",
+    items: {
+      basics: {
+        title: "React fundamentals",
+        description:
+          "Components, state and rendering: my first steps building interfaces.",
+      },
+      tooling: {
+        title: "Modern frontend",
+        description:
+          "React with Vite and Tailwind CSS, with routing and API consumption.",
+      },
+      api: {
+        title: "Backend & REST APIs",
+        description:
+          "Express with TypeScript and Sequelize on PostgreSQL.",
+      },
+      fullstack: {
+        title: "Full-stack with Next.js",
+        description:
+          "Rentia: authentication, cloud database, roles and typed validation.",
+      },
+    },
   },
 
   projects: {

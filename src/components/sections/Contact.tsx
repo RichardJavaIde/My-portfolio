@@ -16,7 +16,7 @@ export function Contact() {
   const t = useDictionary();
 
   return (
-    <Section id="contacto">
+    <Section id="contacto" className="bg-slate-50 dark:bg-slate-900/50">
       <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
         <Reveal>
           <SectionHeading

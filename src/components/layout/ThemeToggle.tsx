@@ -24,7 +24,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   // Solo montamos el icono tras el primer render: hidratación segura.
   useEffect(() => setMounted(true), []);
 
-  const isDark = resolvedTheme === "dark";
+  const isDark = mounted && resolvedTheme === "dark";
   const label = isDark ? t.theme.toLight : t.theme.toDark;
 
   return (

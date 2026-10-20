@@ -5,6 +5,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Reveal } from "@/components/ui/Reveal";
+import { Stats } from "@/components/sections/Stats";
 import { useDictionary } from "@/context/lang-context";
 import { profile } from "@/data/profile";
 
@@ -60,6 +61,8 @@ export function About() {
           </Card>
         </Reveal>
       </div>
+
+      <Stats />
     </Section>
   );
 }

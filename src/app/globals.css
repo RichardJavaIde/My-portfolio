@@ -20,39 +20,8 @@ html.dark {
   color-scheme: dark;
 }
 
-/* ---------- Efecto Reveal (fade + subida) ----------
-   El estado BASE del elemento que aún no ha entrado a la vista.
-   `will-change` sugiere al navegador animar opacity/transform en la GPU.
-   También da arriba de todo un punto de partida uniforme para que el stagger
-   no sea visible si el usuario llega a una sección ya pasada. */
-.reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  will-change: opacity, transform;
-}
-
-/* Cuando Reveal observa el elemento en el viewport, añade .is-visible. */
-.reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
-
-/* ---------- Entrada del Hero (al cargar la página, sin scroll) ---------- */
-@keyframes heroFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.hero-fade {
-  opacity: 0;
-  animation: heroFadeUp 0.7s ease forwards;
-}
+/* Reveal, entrada del Hero y barra de progreso ahora los anima Motion
+   (ver components/ui/Reveal.tsx, sections/Hero.tsx y ui/ScrollProgress.tsx). */
 
 /* ---------- Marquee (cinta infinita de skills) ---------- */
 .marquee {
@@ -121,14 +90,6 @@ html.dark .marquee-item {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
-  }
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
-  .hero-fade {
-    animation: none;
-    opacity: 1;
   }
   .marquee-track {
     animation: none;

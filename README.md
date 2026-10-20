@@ -18,6 +18,8 @@
 | **Tailwind CSS** | v4 (^4) | Estilos utilitarios CSS-first (sin `tailwind.config`). El dark mode se define con `@custom-variant`. |
 | **pnpm** | 11.25 | Gestor de paquetes (Corepack). Rápido y con un workspace file para autorizar builds. |
 | **next-themes** | 0.4.6 | Toggle de tema claro/oscuro: persistencia en `localStorage` y script anti-flash. |
+| **Motion** (`motion/react`) | ^12 | Librería de animación para React: entradas escalonadas, scroll-linked, contadores y resortes. Respeta `prefers-reduced-motion`. |
+| **GitHub Actions** | — | CI (lint + build) y versionado automático con release-please. |
 
 ---
 
@@ -48,6 +50,7 @@ pnpm lint
 
 ```bash
 pnpm add next-themes      # dark mode (toggle manual con persistencia)
+pnpm add motion           # animaciones (import desde "motion/react")
 ```
 
 ```jsonc
@@ -56,7 +59,8 @@ pnpm add next-themes      # dark mode (toggle manual con persistencia)
   "next": "16.3.5",
   "react": "19.2.8",
   "react-dom": "19.2.8",
-  "next-themes": "0.4.6"
+  "next-themes": "0.4.6",
+  "motion": "^12.0.0"
 }
 ```
 
@@ -65,18 +69,19 @@ pnpm add next-themes      # dark mode (toggle manual con persistencia)
 ## 📁 Estructura del proyecto
 
 ```
+├─ .github/workflows/     ci.yml (lint + build) · release.yml (versionado automático)
 src/
 ├─ app/
 │  ├─ layout.tsx          (Server) html lang + ThemeProvider + LangProvider + Navbar + Footer
-│  ├─ page.tsx            (Server) compone las 5 secciones
+│  ├─ page.tsx            (Server) compone las secciones
 │  ├─ icon.svg            favicon SVG: logo de la pestaña (R de Richard + punto cyan)
 │  ├─ favicon.ico         fallback clásico para navegadores/tabs antiguas
 │  └─ globals.css         @import "tailwindcss" + @custom-variant dark + color-scheme
 ├─ components/
 │  ├─ layout/             Navbar, Footer, LangToggle, ThemeToggle  (Client)
-│  ├─ sections/           Hero, About, Skills, Projects, Contact, Marquee  (solo el Marquee es Server)
+│  ├─ sections/           Hero, About (+Stats), Skills, Journey, Projects, Contact, Marquee  (solo el Marquee es Server)
 │  └─ ui/                 primitivas: Container, Section, SectionHeading, Button, Card, Tag
-│                          + Reveal y ScrollProgress  (Client, con hooks)
+│                          + Reveal, ScrollProgress y MotionProvider  (Client, con Motion)
 ├─ context/
 │  └─ lang-context.tsx    (Client) LangProvider + useLang() / useDictionary()
 ├─ i18n/dictionaries/
@@ -85,6 +90,7 @@ src/
 ├─ data/
 │  ├─ profile.ts          nombre, GitHub, email
 │  ├─ skills.ts           grupos de habilidades (categorías bilingües)
+│  ├─ journey.ts          línea de tiempo (trayectoria): ids + tecnologías
 │  └─ projects.ts         proyectos: estructura + stack + links
 └─ lib/
    └─ cn.ts               helper zero-dep para unir clases condicionalmente
@@ -131,30 +137,37 @@ Los componentes **no tienen texto hardcodeado**:  ✓ datos guardan *estructura*
 
 **Regla de oro para agregar un proyecto:** 2 líneas en `src/data/projects.ts` + 3 en el diccionario de cada idioma (`es.ts` y `en.ts`). El compilador te obliga a las dos lenguas.
 
-### 🎬 Efectos y animaciones (toque pro, sin librerías)
+### 🎬 Efectos y animaciones (Motion)
 
-| Efecto | Dónde | Tecnología |
+Todas las animaciones las maneja **Motion** (`import { motion } from "motion/react"`), salvo el marquee, que sigue siendo CSS puro.
+
+| Efecto | Dónde | Cómo |
 |---|---|---|
-| **Reveal + stagger** | Encabezados de sección y tarjetas de About / Skills / Projects / Contact | `IntersectionObserver` (API nativa) + clases `.reveal` / `.is-visible`. Cada tarjeta aparece con un retardo escalonado (80ms skills, 100ms projects) → efecto "cascada" |
-| **Barra de progreso** | Fija arriba, bajo el navbar | Listener `scroll` pasivo + `width` calculado (`scrollY / (scrollHeight − innerHeight)`). Con gradiente cyan |
-| **Marquee** | Cinta infinita de tecnologías bajo el Hero | Solo CSS: `@keyframes` que mueve la pista a `translateX(-50%)` (el ancho de una copia duplicada) → loop sin cortes. Se pausa con `:hover` |
-| **Hero fade-in** | Al cargar la página | `@keyframes heroFadeUp` con `animation-delay` escalonado en texto y avatar |
+| **Entrada del Hero** | Badge, saludo, nombre, rol, resumen y botones | `variants` con `staggerChildren`: cada elemento entra con fade + subida + blur, uno tras otro |
+| **Avatar flotante** | Hero | Entrada con resorte (`type: "spring"`) + loop `y` suave y halo pulsante |
+| **Fondo vivo** | Hero | Dos manchas de color que derivan lentamente (loops `x`/`y`) |
+| **Reveal + stagger** | Encabezados y tarjetas de todas las secciones | `whileInView` + `viewport.once`. Misma API de `<Reveal delay>` que antes |
+| **Contadores** | Franja de cifras en "Sobre mí" | `useInView` + `animate(0, n)`; los números se calculan desde `data/` |
+| **Línea de tiempo** | Sección "Trayectoria" | `useScroll({ target })` alimenta `scaleY`: la línea se dibuja al hacer scroll |
+| **Barra de progreso** | Fija arriba | `useScroll` + `useSpring` animando `scaleX` (GPU, sin recalcular layout) |
+| **Marquee** | Cinta bajo el Hero | Solo CSS: `@keyframes` + `translateX(-50%)`; se pausa con `:hover` |
 
 **Detalles pro:**
-- **`prefers-reduced-motion`** → si el sistema pide menos movimiento, se cancela todo el animation y el contenido queda visible.
-- El `IntersectionObserver` hace `unobserve()` tras activarse → cada reveal corre **una sola vez** (no se re-esconde al subir/bajar).
-- Componentes **Client** con hooks (Reveal, ScrollProgress); el Marquee es **Server** (puro CSS) → cero JavaScript para la cinta.
+- `<MotionProvider>` (`MotionConfig reducedMotion="user"`) desactiva las animaciones de movimiento para quien pide menos movimiento, en todo el sitio.
+- Los contadores muestran directamente el valor final con `prefers-reduced-motion`.
+- Se anima con `transform`/`opacity` (acelerados por GPU) en lugar de `width`/`top`.
 - Demo previa en `demos/lab-animaciones.html` (la usamos para elegir los efectos antes de implementarlos).
 
 ---
 
-## 🧭 Las 5 secciones
+## 🧭 Las secciones
 
 1. **Inicio** (Hero) — nombre, rol, CTAs + avatar desde GitHub.
 2. **Sobre mí** — presentación + "cosas que me definen".
 3. **Habilidades** — grid 1→2→4 columnas, por área.
-4. **Proyectos** — tarjetas; el proyecto *featured* ocupa ancho completo. El repo principal es `SistemaArquileres` (Rentia).
-5. **Contacto** — sin formulario en v1: botones `mailto:` + GitHub.
+4. **Trayectoria** — línea de tiempo animada con las fases de aprendizaje (`data/journey.ts`).
+5. **Proyectos** — tarjetas; el proyecto *featured* ocupa ancho completo. El repo principal es `SistemaArquileres` (Rentia).
+6. **Contacto** — sin formulario en v1: botones `mailto:` + GitHub.
 
 ---
 
@@ -164,6 +177,28 @@ Los componentes **no tienen texto hardcodeado**:  ✓ datos guardan *estructura*
 - **`tsconfig.json`** — `strict: true`, `moduleResolution: "bundler"`, path alias `@/* → ./src/*`.
 - **`next.config.ts`** — `images.remotePatterns` para el avatar de GitHub.
 - **Next 16 genera automáticamente** `AGENTS.md`/`CLAUDE.md` en la raíz (reglas para agentes de IA). Se re-crean con `next dev`; son inofensivos.
+
+---
+
+## 🏷️ CI y versionado automático (GitHub Actions)
+
+| Workflow | Cuándo corre | Qué hace |
+|---|---|---|
+| `.github/workflows/ci.yml` | PRs y push a `main` | `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm build` |
+| `.github/workflows/release.yml` | push a `main` | **release-please**: abre/actualiza un PR de release; al mergearlo crea el tag `vX.Y.Z` y el GitHub Release con su CHANGELOG |
+
+**Flujo:** haces commits con [Conventional Commits](https://www.conventionalcommits.org/) → el bot calcula la versión → mergeas el PR `chore(main): release X.Y.Z` → se crea el tag y el Release.
+
+| Prefijo del commit | Efecto (mientras estemos en `0.x`) |
+|---|---|
+| `fix: ...` | sube el parche → `0.1.0` → `0.1.1` |
+| `feat: ...` | sube el minor → `0.1.0` → `0.2.0` |
+| `feat!: ...` o `BREAKING CHANGE:` | sube el minor (por `bump-minor-pre-major`); desde `1.0.0` sube el major |
+| `docs:`, `chore:`, `style:`, `refactor:` | no fuerzan una versión nueva por sí solos |
+
+**Configuración única en GitHub:** *Settings → Actions → General → Workflow permissions* → activar **"Allow GitHub Actions to create and approve pull requests"**.
+
+Archivos: `release-please-config.json` (reglas) y `.release-please-manifest.json` (versión actual, empieza en `0.1.0`).
 
 ---
 
@@ -182,7 +217,9 @@ El deploy recomendado es **Vercel** (gratis para proyectos personales y nativo p
 - ✅ Página completa con las 5 secciones, bilingüe ES/EN.
 - ✅ Dark mode manual con persistencia.
 - ✅ Email real en `src/data/profile.ts` (botón "Escríbeme" → mailto).
-- ✅ Efectos: reveal + stagger, barra de progreso y marquee (con `prefers-reduced-motion`).
+- ✅ Animaciones con Motion (hero, contadores, línea de tiempo, progreso).
+- ✅ Nueva sección Trayectoria + franja de cifras.
+- ✅ CI + versionado automático con GitHub Actions.
 - ⏳ Pendiente: publicar el deploy.
 
 Hecho con Next.js, React y Tailwind CSS · Aprendizaje por fases con proyectos reales.
