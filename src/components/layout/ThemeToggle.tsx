@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { useDictionary } from "@/context/lang-context";
 import { cn } from "@/lib/cn";
@@ -8,22 +8,38 @@ import { cn } from "@/lib/cn";
 type ThemeToggleProps = { className?: string };
 
 /**
+ * ¿Ya estamos en el navegador (después de hidratar)?
+ * useSyncExternalStore devuelve el snapshot del SERVIDOR (false) durante la
+ * hidratación y luego pasa al del CLIENTE (true), sin useEffect ni setState:
+ * el primer render coincide con el HTML del servidor y no hay mismatch.
+ */
+const noopSubscribe = () => () => {};
+function useMounted() {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
+}
+
+/**
  * Botón circular sol/luna que alterna el tema.
  * - Muestra el icono del DESTINO: en claro se ve la luna (clic → oscuro),
  *   en oscuro se ve el sol (clic → claro).
- * - `mounted` evita el mismatch de hidratación: antes de montar, el servidor
- *   y el cliente podrían "pensar" distinto sobre el tema (el script de
- *   next-themes ya puso la clase en <html>); renderizamos vacío hasta que
- *   existe el navegador.
+ * - `mounted` (useMounted) evita el mismatch de hidratación: antes de montar,
+ *   el servidor y el cliente podrían "pensar" distinto sobre el tema (el
+ *   script de next-themes ya puso la clase en <html>); renderizamos vacío
+ *   hasta que existe el navegador.
  */
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const t = useDictionary();
 
-  // Solo montamos el icono tras el primer render: hidratación segura.
-  useEffect(() => setMounted(true), []);
-
+  // Antes de montar, el servidor no conoce el tema guardado (asume claro) pero
+  // el cliente sí lo lee de localStorage. Si usáramos resolvedTheme directo,
+  // aria-label/title diferirían entre servidor y cliente → hydration mismatch.
+  // Con `mounted &&` el primer render del cliente coincide con el del servidor.
   const isDark = mounted && resolvedTheme === "dark";
   const label = isDark ? t.theme.toLight : t.theme.toDark;
 
