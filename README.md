@@ -184,10 +184,10 @@ Todas las animaciones las maneja **Motion** (`import { motion } from "motion/rea
 
 | Workflow | Cuándo corre | Qué hace |
 |---|---|---|
-| `.github/workflows/ci.yml` | PRs y push a `main` | `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm build` |
-| `.github/workflows/release.yml` | push a `main` | **release-please**: abre/actualiza un PR de release; al mergearlo crea el tag `vX.Y.Z` y el GitHub Release con su CHANGELOG |
+| `.github/workflows/ci.yml` | PRs y push a `master` | `pnpm install --frozen-lockfile` → `pnpm lint` → `pnpm build` |
+| `.github/workflows/release.yml` | push a `master` | **release-please**: abre/actualiza un PR de release; al mergearlo crea el tag `vX.Y.Z` y el GitHub Release con su CHANGELOG |
 
-**Flujo:** haces commits con [Conventional Commits](https://www.conventionalcommits.org/) → el bot calcula la versión → mergeas el PR `chore(main): release X.Y.Z` → se crea el tag y el Release.
+**Flujo:** haces commits con [Conventional Commits](https://www.conventionalcommits.org/) → el bot calcula la versión → mergeas el PR `chore(master): release X.Y.Z` → se crea el tag y el Release.
 
 | Prefijo del commit | Efecto (mientras estemos en `0.x`) |
 |---|---|
@@ -199,6 +199,22 @@ Todas las animaciones las maneja **Motion** (`import { motion } from "motion/rea
 **Configuración única en GitHub:** *Settings → Actions → General → Workflow permissions* → activar **"Allow GitHub Actions to create and approve pull requests"**.
 
 Archivos: `release-please-config.json` (reglas) y `.release-please-manifest.json` (versión actual, empieza en `0.1.0`).
+
+### 🐳 Imagen Docker con la versión
+
+Al mergear el PR de release, el job `docker` de `release.yml` construye la imagen y la sube a **GitHub Container Registry** con dos tags: la versión (`0.2.0`) y `latest`. La imagen también lleva la versión como etiqueta OCI.
+
+```bash
+# Descargar y correr una versión concreta (reemplaza usuario/repo, en minúsculas)
+docker run -p 3000:3000 ghcr.io/usuario/repo:0.2.0   # → http://localhost:3000
+
+# Construir localmente con tu versión
+docker build --build-arg APP_VERSION=0.1.0 -t portafolio:0.1.0 .
+```
+
+- `Dockerfile`: multi-etapa (deps → build → runtime), usa `output: "standalone"` de Next.js y corre como usuario sin privilegios.
+- `ci.yml` también construye la imagen (sin subirla) para detectar un Dockerfile roto antes de crear una versión.
+- Si agregas una carpeta `public/`, ya se copia sola a la imagen.
 
 ---
 

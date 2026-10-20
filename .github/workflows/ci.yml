@@ -1,6 +1,6 @@
 name: CI
 
-# Corre en cada PR y en cada push a main: lint + build.
+# Corre en cada PR y en cada push a master: lint + build.
 # Si algo falla aquí, NO deberías mergear (ni liberar versión).
 on:
   pull_request:
@@ -43,3 +43,19 @@ jobs:
       # next build ya incluye el type-check de TypeScript.
       - name: Build
         run: pnpm build
+
+  # Verifica que la imagen Docker construye en cada PR/push, SIN subirla.
+  # Así un Dockerfile roto se detecta antes de crear una versión.
+  docker-build:
+    name: Docker build (sin push)
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
