@@ -7,7 +7,7 @@ name: Release
 #  3. Cuando MERGEAS ese PR, el bot crea el tag vX.Y.Z y el GitHub Release.
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 permissions:
   contents: write       # crear tags y releases
