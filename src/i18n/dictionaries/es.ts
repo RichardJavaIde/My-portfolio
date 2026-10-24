@@ -12,7 +12,7 @@ export const es = {
   meta: {
     title: "Richard Duran — Desarrollador Web",
     description:
-      "Portafolio de Richard, desarrollador web full-stack con Next.js, React y TypeScript.",
+      "Portafolio de Richard, desarrollador web full-stack con Next.js, React y TypeScript. Bases de datos con Prisma, despliegue con Docker y Coolify.",
   },
 
   nav: [
@@ -30,7 +30,7 @@ export const es = {
     name: "Richard Duran",
     role: "Desarrollador full-stack con Next.js",
     summary:
-      "Construyo aplicaciones web modernas y completas con Next.js, React, TypeScript y el ecosistema serverless.",
+      "Construyo aplicaciones web modernas y completas con Next.js, React y TypeScript, y las llevo a producción con Docker y Coolify.",
     primaryCta: "Ver mis proyectos",
     secondaryCta: "Ver GitHub",
   },
@@ -40,12 +40,15 @@ export const es = {
     title: "Aprendiendo en público y construyendo en serio",
     paragraphs: [
       "Soy Richard, un desarrollador web en formación guiada por fases. Creo en aprender haciendo: cada concepto nuevo lo llevo a un proyecto real, no a un ejercicio suelto.",
-      "Mi proyecto principal es Rentia, un sistema completo de gestión de alquileres: autenticación, base de datos en la nube, paneles por rol y validación tipada. Lo construí de cero y lo documento todo en un diario de aprendizaje por fases.",
+      "Mis proyectos más completos son Rentia (gestión de alquileres), Menufoto (menú digital para restaurantes) y Divisas (tasas de cambio para pantallas de TV): sistemas con autenticación, roles, base de datos y despliegue real. Los empaqueto con Docker, los publico con Coolify y automatizo las versiones con GitHub Actions.",
+      "También incorporo la inteligencia artificial a mi flujo de trabajo, con herramientas como Claude Code, y documento cada paso del camino en un diario de aprendizaje por fases.",
     ],
     highlightsTitle: "Cosas que me definen",
     highlights: [
       "Enfoque en el ecosistema de Next.js",
-      "Bases de datos con PostgreSQL y Drizzle ORM",
+      "Bases de datos con PostgreSQL, Prisma y Drizzle ORM",
+      "Despliegue con Docker, Coolify y GitHub Actions",
+      "Desarrollo asistido por inteligencia artificial",
       "Aprendizaje por fases con proyectos reales",
       "Documentación de cada paso del camino",
     ],
@@ -67,7 +70,7 @@ export const es = {
     eyebrow: "Trayectoria",
     title: "Cómo he ido creciendo",
     description:
-      "Mi ruta de aprendizaje, fase por fase: de los fundamentos de React a un sistema full-stack completo.",
+      "Mi ruta de aprendizaje, fase por fase: de los fundamentos de React a proyectos full-stack desplegados con Docker y Coolify.",
     phaseLabel: "Fase",
     items: {
       basics: {
@@ -90,13 +93,23 @@ export const es = {
         description:
           "Rentia: autenticación, base de datos en la nube, roles y validación tipada.",
       },
+      products: {
+        title: "Productos reales con Prisma",
+        description:
+          "Menufoto y Divisas: Prisma, roles, sesiones seguras, fotos optimizadas y publicación en Vercel.",
+      },
+      devops: {
+        title: "Despliegue y DevOps",
+        description:
+          "Imágenes Docker, despliegue autoalojado con Coolify y CI/CD con GitHub Actions y versionado automático.",
+      },
     },
   },
 
   projects: {
     eyebrow: "Proyectos",
     title: "Cosas que he construido",
-    description: "De mi proyecto full-stack principal a mis prácticas de base.",
+    description: "De mis proyectos full-stack a mis prácticas de base.",
     featuredBadge: "Destacado",
     repoButton: "Ver repositorio",
     liveButton: "Ver demo",
@@ -105,6 +118,20 @@ export const es = {
         title: "Rentia — Sistema de alquileres",
         description:
           "Plataforma full-stack de gestión de alquileres: roles admin/owner/tenant, autenticación con Better Auth, PostgreSQL en Neon con Drizzle ORM y validación tipada con Zod.",
+      },
+      menufoto: {
+        title: "Menufoto — Menú digital visual",
+        description:
+          "Menú digital para restaurantes: carta pública con 5 temas, panel de administración con roles ADMIN y USER, fotos optimizadas a WebP, código QR y login con límite de intentos. Next.js, Prisma, Neon, Vercel Blob y Docker.",
+      },
+      divisas: {
+        title: "Divisas — Sistema de tasas para casa de cambio",
+        description:
+          "Panel protegido para administrar monedas y tasas con historial de cambios, y una pantalla pública pensada para TV vertical (1080×1920) que se actualiza sola y sigue funcionando sin conexión.",
+      },
+      cotizador: {
+        title: "Cotizador de criptomonedas — React + Vite",
+        description: "Cotizador de criptomonedas construido con React y Vite.",
       },
       client: {
         title: "Client — React + Vite + Tailwind",

@@ -5,9 +5,19 @@
  * el TEXTO (título y descripción) vive en el diccionario (es.ts / en.ts),
  * bajo `projects.items[id]`. Así agregar un proyecto es:
  *   1 línea aquí + 2 líneas en es.ts + 2 líneas en en.ts.
+ *
+ * 👉 El ORDEN del array es el orden visual. Un proyecto `featured` ocupa
+ *    todo el ancho; conviene dejar solo uno (o un número par de normales).
  */
 
-export type ProjectId = "rentia" | "client" | "server" | "frontend";
+export type ProjectId =
+  | "rentia"
+  | "menufoto"
+  | "divisas"
+  | "cotizador"
+  | "client"
+  | "server"
+  | "frontend";
 
 export type Project = {
   id: ProjectId;
@@ -18,8 +28,26 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    id: "menufoto",
+     featured: true,
+    stack: [
+      "Next.js",
+      "React 19",
+      "TypeScript",
+      "Prisma",
+      "PostgreSQL (Neon)",
+      "Vercel Blob",
+      "Docker",
+      "Zod",
+    ],
+    links: {
+      repo: "https://github.com/RichardJavaIde/Menufoto",
+      live: "https://testmenu.devfitt.com/",
+    },
+  },
+  {
     id: "rentia",
-    featured: true,
+   
     stack: [
       "Next.js",
       "TypeScript",
@@ -29,7 +57,34 @@ export const projects: Project[] = [
       "Better Auth",
       "Zod",
     ],
-    links: { repo: "https://github.com/RichardJavaIde/SistemaArquileres" },
+    links: {
+      repo: "https://github.com/RichardJavaIde/SistemaArquileres",
+      live: "https://sistema-arquileres.vercel.app",
+    },
+  },
+  
+  {
+    id: "divisas",
+    stack: [
+      "Next.js",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS",
+      "Prisma",
+      "SQLite",
+      "Zod",
+    ],
+    links: {
+      repo: "https://github.com/RichardJavaIde/Divisas",
+      live: "https://divisas-rt6f.vercel.app",
+    },
+  },
+  {
+    id: "cotizador",
+    stack: ["React", "Vite", "JavaScript"],
+    links: {
+      repo: "https://github.com/RichardJavaIde/cotizador-de-criptomonedas",
+    },
   },
   {
     id: "client",

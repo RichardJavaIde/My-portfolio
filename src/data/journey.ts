@@ -7,7 +7,13 @@
  *    Edítalo si tu recorrido real fue distinto.
  */
 
-export type JourneyId = "basics" | "tooling" | "api" | "fullstack";
+export type JourneyId =
+  | "basics"
+  | "tooling"
+  | "api"
+  | "fullstack"
+  | "products"
+  | "devops";
 
 export type JourneyStep = {
   id: JourneyId;
@@ -21,5 +27,13 @@ export const journey: JourneyStep[] = [
   {
     id: "fullstack",
     tech: ["Next.js", "Drizzle ORM", "PostgreSQL (Neon)", "Better Auth", "Zod"],
+  },
+  {
+    id: "products",
+    tech: ["Next.js", "Prisma", "PostgreSQL (Neon)", "SQLite", "Vercel Blob"],
+  },
+  {
+    id: "devops",
+    tech: ["Docker", "Coolify", "GitHub Actions", "GitHub Container Registry"],
   },
 ];
